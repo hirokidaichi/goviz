@@ -8,6 +8,7 @@ import (
     "go/token"
     "io"
     "io/ioutil"
+    "math"
     "os"
     "path/filepath"
     "regexp"
@@ -18,10 +19,11 @@ import (
 var fp = fmt.Fprintln
 var ff = fmt.Fprintf
 
-var inputDir = flag.String("i", "github.com/hirokidaichi/goviz", "Input Dir")
+var inputDir = flag.String("i", "", "Input Dir (like -i github.com/hirokidaihi/goviz)")
 var outputFile = flag.String("o", "STDOUT", "Output File")
 var ignoreTest = flag.Bool("ignore-test", false, "Ignore *_test.go File")
 var ignoreLibs = flag.Bool("ignore-libs", false, "Ignore $GOROOT/pkg")
+var level = flag.Int("level", math.MaxInt8, "Ignore $GOROOT/pkg")
 
 func GOSRC() string {
     return filepath.Join(os.Getenv("GOPATH"), "src")
@@ -35,11 +37,15 @@ func main() {
         flag.Usage()
         os.Exit(1)
     }
+    if 0 > *level {
+        flag.Usage()
+        os.Exit(1)
+    }
     output := getOutputWriter(*outputFile)
     fp(output, "digraph main{")
     fp(output, `edge[arrowhead="vee"]`)
-    fp(output, "graph [rankdir=LR,compound=true,ranksep=2.0];")
-    root.DumpRelation(output)
+    fp(output, "graph [rankdir=LR,compound=true,ranksep=1.0];")
+    root.DumpRelation(output, *level)
     fp(output, "}")
 
 }
@@ -80,10 +86,10 @@ func glob(dirPath string) []string {
 
     for _, v := range fileNames {
         if isMatched("test", v) {
-            break
+            continue
         }
         if isMatched("example", v) {
-            break
+            continue
         }
         files = append(files, v)
     }
@@ -128,8 +134,11 @@ func (p *GoImportPath) HasFiles() bool {
 func (p *GoImportPath) IsSkipped() bool {
     return (*ignoreLibs && !p.HasFiles())
 }
-func (p *GoImportPath) DumpRelation(output io.Writer) {
+func (p *GoImportPath) DumpRelation(output io.Writer, depth int) {
     if p.isDumped {
+        return
+    }
+    if depth <= 0 {
         return
     }
     p.isDumped = true
@@ -138,14 +147,14 @@ func (p *GoImportPath) DumpRelation(output io.Writer) {
     for _, f := range p.Files {
         for _, d := range f.Imports {
             if d.IsSkipped() {
-                break
+                continue
             }
             key := strings.Join([]string{p.ImportPath, d.ImportPath}, "-")
             if !cache[key] {
                 ff(output, "%s -> %s\n", escape(p.ImportPath), escape(d.ImportPath))
             }
             cache[key] = true
-            d.DumpRelation(output)
+            d.DumpRelation(output, depth-1)
         }
     }
 
