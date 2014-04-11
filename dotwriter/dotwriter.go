@@ -11,7 +11,7 @@ type IDotNode interface {
     Label() string
     Shape() string
     Style() string
-    Siblings() []IDotNode
+    Children() []IDotNode
 }
 
 type DotWriter struct {
@@ -84,7 +84,7 @@ func (dw *DotWriter) plotNode(ctx *plotCtx, node IDotNode) {
     }
     ctx.setPlotted(node)
     dw.plotNodeStyle(node)
-    for _, s := range node.Siblings() {
+    for _, s := range node.Children() {
         dw.plotEdge(ctx, node, s)
         dw.plotNode(ctx.Deeper(), s)
     }

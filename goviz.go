@@ -18,13 +18,13 @@ var plotLeaf = flag.Bool("l", false, "")
 
 func main() {
     flag.Parse()
-
-    filter := goimport.NewImportFilter(
+    /*
+     */
+    root := goimport.ParseRelation(
         *inputDir,
         *seekPath,
         *plotLeaf,
     )
-    root := goimport.NewGoImportPath(*inputDir, filter)
     if !root.HasFiles() {
         flag.Usage()
         os.Exit(1)
