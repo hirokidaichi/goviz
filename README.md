@@ -90,7 +90,7 @@ goviz -i github.com/tsenart/vegeta -l| dot -Tpng -o vegeta.png
 
 
 ```
-goviz -i github.com/mitchellh/packer --search SELF -l| dot -Tpng -o packer.png
+goviz -i github.com/mitchellh/packer --search SELF| dot -Tpng -o packer.png
 ```
 ![](https://raw.githubusercontent.com/hirokidaichi/goviz/master/images/packer.png)
 

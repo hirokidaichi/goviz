@@ -55,7 +55,7 @@ my @SAMPLES = map { Sample->new($_) } (
         title  => "packer",
         image  => "packer.png",
         repo   => "github.com/mitchellh/packer",
-        option => "--search SELF -l",
+        option => "--search SELF",
     },
     {
         title  => "docker plot depth 1",
