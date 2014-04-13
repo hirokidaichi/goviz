@@ -6,19 +6,20 @@ import (
 )
 
 func ParseRelation(
-    rootPath string, seekPath string, leafVisibility bool) *ImportPath {
+    rootPath string, seekPath string, leafVisibility bool) *ImportPathFactory {
 
     factory := NewImportPathFactory(
         rootPath,
         seekPath,
         leafVisibility,
     )
-    return factory.Get(rootPath)
+    factory.Root = factory.Get(rootPath)
+    return factory
 
 }
 
 type ImportPathFactory struct {
-    //Root   *ImportPath
+    Root   *ImportPath
     Filter *ImportFilter
     Pool   map[string]*ImportPath
 }
@@ -34,6 +35,17 @@ func NewImportPathFactory(
     )
     self.Filter = filter
     return self
+}
+func (self *ImportPathFactory) GetRoot() *ImportPath {
+    return self.Root
+}
+
+func (self *ImportPathFactory) GetAll() []*ImportPath {
+    ret := make([]*ImportPath, 0)
+    for _, value := range self.Pool {
+        ret = append(ret, value)
+    }
+    return ret
 }
 
 func (self *ImportPathFactory) Get(importPath string) *ImportPath {

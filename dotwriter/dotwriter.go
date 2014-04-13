@@ -12,11 +12,13 @@ type IDotNode interface {
     Shape() string
     Style() string
     Children() []IDotNode
+    Parents() []IDotNode
 }
 
 type DotWriter struct {
     output   io.Writer
     MaxDepth int
+    Reversed bool
 }
 
 type plotCtx struct {
@@ -84,12 +86,18 @@ func (dw *DotWriter) plotNode(ctx *plotCtx, node IDotNode) {
     }
     ctx.setPlotted(node)
     dw.plotNodeStyle(node)
-    for _, s := range node.Children() {
+    for _, s := range dw.getDependency(node) {
         dw.plotEdge(ctx, node, s)
         dw.plotNode(ctx.Deeper(), s)
     }
 }
 
+func (dw *DotWriter) getDependency(node IDotNode) []IDotNode {
+    if dw.Reversed {
+        return node.Parents()
+    }
+    return node.Children()
+}
 func (dw *DotWriter) plotNodeStyle(node IDotNode) {
     dw.printFormat("\t/* plot %s */\n", node.Name())
     dw.printFormat("\t%s[shape=%s,label=\"%s\",style=%s]\n",
@@ -104,7 +112,11 @@ func (dw *DotWriter) plotEdge(ctx *plotCtx, nodeA, nodeB IDotNode) {
     if ctx.isPlottedEdge(nodeA, nodeB) {
         return
     }
-    dw.printFormat("\t%s -> %s\n", escape(nodeA.Name()), escape(nodeB.Name()))
+    dir := "forward"
+    if dw.Reversed {
+        dir = "back"
+    }
+    dw.printFormat("\t%s -> %s[dir=%s]\n", escape(nodeA.Name()), escape(nodeB.Name()), dir)
 }
 
 func (dw *DotWriter) printLine(str string) {

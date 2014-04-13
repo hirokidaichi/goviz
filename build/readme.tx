@@ -1,0 +1,73 @@
+iz has a function which outputs the metrics (instability) of go project. goviz
+=====
+
+a visualization tool for golang project dependency
+
+This tool is for helping source code reading. 
+The dependency of the whole code can be visualized quickly. 
+
+![](https://raw.githubusercontent.com/hirokidaichi/goviz/master/images/<:$own.image:>)
+
+
+
+## Installation
+
+```
+go install github.com/hirokidaichi/goviz
+```
+
+and if not being installed [graphviz](http://www.graphviz.org), install it :
+
+```
+brew install graphviz
+```
+
+## Usage
+
+```
+goviz -i github.com/hashicorp/serf | dot -Tpng -o hoge.png
+```
+
+### Option
+
+```
+<: $usage :>
+```
+
+## Samples
+: for $samples -> $sample { 
+
+### [<:$sample.title:>](https://<:$sample.repo:>)
+
+
+```
+goviz -i <: $sample.repo :> <:$sample.option:>| dot -Tpng -o <:$sample.image:>
+```
+![](https://raw.githubusercontent.com/hirokidaichi/goviz/master/images/<:$sample.image:>)
+
+: }
+
+### docker's metrics
+goviz has a function which outputs the metrics (instability) of go project. 
+
+```
+goviz -i github.com/dotcloud/docker/docker -m 
+```
+Instability is a value of 0 to 1. 
+It suggests that it is such an unstable module that this value is high. 
+It becomes easy to distinguish whether it is a module nearer to  application layer, and whether it is a module near a common library. 
+
+
+```
+<:$metrics:>
+```
+## Ricense
+
+MIT
+
+## Author
+
+hirokidaichi [at] gmail.com
+
+
+

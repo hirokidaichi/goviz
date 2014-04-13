@@ -12,8 +12,11 @@ import (
 type ImportPath struct {
     ImportPath string
     Files      []*Source
+    children   []dotwriter.IDotNode
+    parents    []dotwriter.IDotNode
 }
 
+// ImportPath implements IDotNode
 var _ dotwriter.IDotNode = &ImportPath{}
 
 func NewImportPath(importPath string, filter *ImportFilter) *ImportPath {
@@ -21,7 +24,6 @@ func NewImportPath(importPath string, filter *ImportFilter) *ImportPath {
 }
 
 func (self *ImportPath) Init(factory *ImportPathFactory, fileNames []string) {
-
     sourceFiles := make([]*Source, len(fileNames))
     for idx, fileName := range fileNames {
         source, err := NewSource(fileName, factory)
@@ -32,6 +34,28 @@ func (self *ImportPath) Init(factory *ImportPathFactory, fileNames []string) {
 
     }
     self.Files = sourceFiles
+
+    for _, f := range self.Files {
+        for _, d := range f.Imports {
+            self.AddChild(d)
+            d.AddParent(self)
+        }
+    }
+
+}
+
+func (self *ImportPath) AddChild(child dotwriter.IDotNode) {
+    if self.children == nil {
+        self.children = make([]dotwriter.IDotNode, 0)
+    }
+    self.children = append(self.children, child)
+}
+
+func (self *ImportPath) AddParent(parent dotwriter.IDotNode) {
+    if self.parents == nil {
+        self.parents = make([]dotwriter.IDotNode, 0)
+    }
+    self.parents = append(self.parents, parent)
 }
 
 func (self *ImportPath) Label() string {
@@ -62,15 +86,12 @@ func (self *ImportPath) Style() string {
 }
 
 func (self *ImportPath) Children() []dotwriter.IDotNode {
-    list := make([]dotwriter.IDotNode, 0)
-    for _, f := range self.Files {
-        for _, d := range f.Imports {
-            list = append(list, d)
-        }
-    }
-    return list
+    return self.children
 }
 
+func (self *ImportPath) Parents() []dotwriter.IDotNode {
+    return self.parents
+}
 func (p *ImportPath) HasFiles() bool {
     return (len(p.Files) != 0)
 }
@@ -107,7 +128,7 @@ func glob(dirPath string) []string {
         panic("no gofiles")
     }
 
-    files := make([]string, 0)
+    files := make([]string, 0, len(fileNames))
 
     for _, v := range fileNames {
         if isMatched("test", v) {

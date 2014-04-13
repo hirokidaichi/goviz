@@ -37,7 +37,7 @@ func unescape(target string) string {
 }
 
 func collectPathValue(imports []*ast.ImportSpec, factory *ImportPathFactory) []*ImportPath {
-    r := make([]*ImportPath, 0)
+    r := make([]*ImportPath, 0, len(imports))
     for _, path := range imports {
         pathName := unescape(path.Path.Value)
         importPath := factory.Get(pathName)
