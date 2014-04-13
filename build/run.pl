@@ -89,7 +89,7 @@ my $own = Sample->new(
     {
         image  => "own.png",
         repo   => "github.com/hirokidaichi/goviz",
-        option => "-l"
+        option => ""
     }
 );
 $own->exec;
