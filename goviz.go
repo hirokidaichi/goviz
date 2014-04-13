@@ -23,7 +23,6 @@ func getOptions() *options {
     options := new(options)
     _, err := flags.Parse(options)
     if err != nil {
-        fmt.Println(err)
         os.Exit(1)
     }
     return options

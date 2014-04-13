@@ -1,14 +1,12 @@
-iz has a function which outputs the metrics (instability) of go project. goviz
+goviz
 =====
 
 a visualization tool for golang project dependency
-
-This tool is for helping source code reading. 
-The dependency of the whole code can be visualized quickly. 
-
 ![](https://raw.githubusercontent.com/hirokidaichi/goviz/master/images/<:$own.image:>)
 
 
+This tool is for helping source code reading. 
+The dependency of the whole code can be visualized quickly. 
 
 ## Installation
 
