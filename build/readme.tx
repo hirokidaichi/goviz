@@ -11,7 +11,7 @@ The dependency of the whole code can be visualized quickly.
 ## Installation
 
 ```
-go install github.com/hirokidaichi/goviz
+go get github.com/hirokidaichi/goviz
 ```
 
 and if not being installed [graphviz](http://www.graphviz.org), install it :
