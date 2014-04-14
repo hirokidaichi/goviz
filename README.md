@@ -210,7 +210,7 @@ Inst:0.000 Ca(  2) Ce(  0)	github.com/dotcloud/docker/pkg/graphdb
 Inst:0.000 Ca(  5) Ce(  0)	github.com/dotcloud/docker/vendor/src/code.google.com/p/go/src/pkg/archive/tar
 
 ```
-## Ricense
+## License
 
 MIT
 
