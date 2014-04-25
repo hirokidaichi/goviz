@@ -5,7 +5,6 @@ import (
     "github.com/hirokidaichi/goviz/dotwriter"
     "os"
     "path/filepath"
-    "regexp"
     "strings"
 )
 
@@ -111,33 +110,4 @@ func (p *ImportPath) String() string {
 func fileExists(file string) bool {
     _, err := os.Stat(file)
     return !os.IsNotExist(err)
-}
-
-func goSrc() string {
-    return filepath.Join(os.Getenv("GOPATH"), "src")
-}
-
-func isMatched(pattern string, target string) bool {
-    r, _ := regexp.Compile(pattern)
-    return r.MatchString(target)
-}
-
-func glob(dirPath string) []string {
-    fileNames, err := filepath.Glob(filepath.Join(dirPath, "/*.go"))
-    if err != nil {
-        panic("no gofiles")
-    }
-
-    files := make([]string, 0, len(fileNames))
-
-    for _, v := range fileNames {
-        if isMatched("test", v) {
-            continue
-        }
-        if isMatched("example", v) {
-            continue
-        }
-        files = append(files, v)
-    }
-    return files
 }

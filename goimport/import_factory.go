@@ -1,7 +1,9 @@
 package goimport
 
 import (
+    "os"
     "path/filepath"
+    "regexp"
     "strings"
 )
 
@@ -14,6 +16,9 @@ func ParseRelation(
         leafVisibility,
     )
     factory.Root = factory.Get(rootPath)
+    if factory.Root == nil {
+        return nil
+    }
     return factory
 
 }
@@ -117,4 +122,33 @@ func (self *ImportFilter) Applicable(path string) bool {
         return true
     }
     return false
+}
+
+func isMatched(pattern string, target string) bool {
+    r, _ := regexp.Compile(pattern)
+    return r.MatchString(target)
+}
+
+func glob(dirPath string) []string {
+    fileNames, err := filepath.Glob(filepath.Join(dirPath, "/*.go"))
+    if err != nil {
+        panic("no gofiles")
+    }
+
+    files := make([]string, 0, len(fileNames))
+
+    for _, v := range fileNames {
+        if isMatched("test", v) {
+            continue
+        }
+        if isMatched("example", v) {
+            continue
+        }
+        files = append(files, v)
+    }
+    return files
+}
+
+func goSrc() string {
+    return filepath.Join(os.Getenv("GOPATH"), "src")
 }

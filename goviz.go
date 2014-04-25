@@ -19,56 +19,74 @@ type options struct {
     UseMetrics bool   `short:"m" long:"metrics" default:"false" description:"display module metrics"`
 }
 
-func getOptions() *options {
+func getOptions() (*options, error) {
     options := new(options)
     _, err := flags.Parse(options)
     if err != nil {
-        os.Exit(1)
+        return nil, err
     }
-    return options
+    return options, nil
 
 }
-
 func main() {
-    options := getOptions()
+    res := process()
+    os.Exit(res)
+}
+
+func errorf(format string, args ...interface{}) {
+    fmt.Fprintf(os.Stderr, format, args...)
+}
+
+func process() int {
+    options, err := getOptions()
+    if err != nil {
+        return 1
+    }
     factory := goimport.ParseRelation(
         options.InputDir,
         options.SeekPath,
         options.PlotLeaf,
     )
+    if factory == nil {
+        errorf("inputdir does not exist.\n go get %s", options.InputDir)
+        return 1
+    }
     root := factory.GetRoot()
     if !root.HasFiles() {
-        fmt.Fprintf(os.Stderr, "%s has no .go files\n", root.ImportPath)
-        os.Exit(1)
+        errorf("%s has no .go files\n", root.ImportPath)
+        return 1
     }
     if 0 > options.Depth {
-        fmt.Fprintf(os.Stderr, "-d or --depth should have positive int\n")
-        os.Exit(1)
+        errorf("-d or --depth should have positive int\n")
+        return 1
     }
     output := getOutputWriter(options.OutputFile)
     if options.UseMetrics {
         metrics_writer := metrics.New(output)
-
         metrics_writer.Plot(pathToNode(factory.GetAll()))
-        return
+        return 0
     }
 
     writer := dotwriter.New(output)
     writer.MaxDepth = options.Depth
     if options.Reversed == "" {
         writer.PlotGraph(root)
-        return
+        return 0
     }
     writer.Reversed = true
 
     rroot := factory.Get(options.Reversed)
+    if rroot == nil {
+        errorf("-r %s does not exist.\n ", options.Reversed)
+        return 1
+    }
     if !rroot.HasFiles() {
-
-        os.Exit(1)
+        errorf("-r %s has no go files.\n ", options.Reversed)
+        return 1
     }
 
     writer.PlotGraph(rroot)
-
+    return 0
 }
 
 func pathToNode(pathes []*goimport.ImportPath) []dotwriter.IDotNode {
