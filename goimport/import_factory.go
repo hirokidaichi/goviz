@@ -71,23 +71,25 @@ func (self *ImportPathFactory) Get(importPath string) *ImportPath {
         return pool[importPath]
     }
 
-    dirPath := filepath.Join(goSrc(), importPath)
-    if !fileExists(dirPath) {
-        // if invisible return nil
-        if !filter.Visible(importPath) {
-            return nil
+    for _, gopath := range filepath.SplitList(os.Getenv("GOPATH")) {
+        dirPath := filepath.Join(gopath, "src", importPath)
+        if fileExists(dirPath) {
+            ret := &ImportPath{
+                ImportPath: importPath,
+            }
+            pool[importPath] = ret
+            fileNames := glob(dirPath)
+            ret.Init(self, fileNames)
+            return ret
         }
-        pool[importPath] = &ImportPath{
-            ImportPath: importPath}
-        return pool[importPath]
     }
-    ret := &ImportPath{
-        ImportPath: importPath,
+    // if invisible return nil
+    if !filter.Visible(importPath) {
+        return nil
     }
-    pool[importPath] = ret
-    fileNames := glob(dirPath)
-    ret.Init(self, fileNames)
-    return ret
+    pool[importPath] = &ImportPath{
+        ImportPath: importPath}
+    return pool[importPath]
 }
 
 //ImportFilter
@@ -147,8 +149,4 @@ func glob(dirPath string) []string {
         files = append(files, v)
     }
     return files
-}
-
-func goSrc() string {
-    return filepath.Join(os.Getenv("GOPATH"), "src")
 }
