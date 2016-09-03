@@ -17,7 +17,7 @@ type options struct {
     SeekPath   string `short:"s" long:"search" default:"" description:"top directory of searching"`
     PlotLeaf   bool   `short:"l" long:"leaf" description:"whether leaf nodes are plotted"`
     UseMetrics bool   `short:"m" long:"metrics" description:"display module metrics"`
-    FilesShown int    `short:"e" long:"files-shown" default:"2147483647" description:"number of files shown in a package"`
+    FilesShown int    `short:"e" long:"files-shown" default:"2147483647" description:"limit filenames displayed in a package"`
 }
 
 func getOptions() (*options, error) {
