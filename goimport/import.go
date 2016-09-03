@@ -57,14 +57,19 @@ func (self *ImportPath) AddParent(parent dotwriter.IDotNode) {
     self.parents = append(self.parents, parent)
 }
 
-func (self *ImportPath) Label() string {
+func (self *ImportPath) Label(limit int) string {
     if !self.HasFiles() {
         return self.ImportPath
+    }
+    if limit == 0 {
+        return fmt.Sprintf("%s|%s",
+            self.Files[0].Namespace,
+            self.ImportPath)
     }
     return fmt.Sprintf("%s|%s|%s",
         self.Files[0].Namespace,
         self.ImportPath,
-        strings.Join(self.FileNames(), `\n`))
+        strings.Join(self.FileNames(limit), `\n`))
 }
 
 func (self *ImportPath) Name() string { return self.ImportPath }
@@ -95,12 +100,25 @@ func (p *ImportPath) HasFiles() bool {
     return (len(p.Files) != 0)
 }
 
-func (p *ImportPath) FileNames() []string {
+
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+func (p *ImportPath) FileNames(limit int) []string {
     fileNames := make([]string, len(p.Files))
     for idx, v := range p.Files {
         fileNames[idx] = filepath.Base(v.FileName)
     }
-    return fileNames
+    end := min(limit, len(fileNames))
+    ignored := len(fileNames) - end
+    if ignored > 1 {
+        t := fmt.Sprintf("%d items not shown", ignored)
+        return append(fileNames[:end], t)
+    }
+    return fileNames[:end]
 }
 
 func (p *ImportPath) String() string {
