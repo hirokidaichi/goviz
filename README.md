@@ -33,7 +33,7 @@ Usage:
   goviz [OPTIONS]
 
 Application Options:
-  -i, --input=   intput ploject name
+  -i, --input=   input project name
   -o, --output=  output file (STDOUT)
   -d, --depth=   max plot depth of the dependency tree (128)
   -f, --focus=   focus on the specific module
