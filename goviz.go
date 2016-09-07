@@ -10,7 +10,7 @@ import (
 )
 
 type options struct {
-    InputDir   string `short:"i" long:"input" required:"true" description:"intput ploject name"`
+    InputDir   string `short:"i" long:"input" required:"true" description:"input project name"`
     OutputFile string `short:"o" long:"output" default:"STDOUT" description:"output file"`
     Depth      int    `short:"d" long:"depth" default:"128" description:"max plot depth of the dependency tree"`
     Reversed   string `short:"f" long:"focus" description:"focus on the specific module"`
