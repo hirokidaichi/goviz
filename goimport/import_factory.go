@@ -138,10 +138,10 @@ func glob(dirPath string) []string {
     files := make([]string, 0, len(fileNames))
 
     for _, v := range fileNames {
-        if isMatched("test", v) {
+        if isMatched("_test[.]go", v) {
             continue
         }
-        if isMatched("example", v) {
+        if isMatched("_example[.]go", v) {
             continue
         }
         files = append(files, v)
