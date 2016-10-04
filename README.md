@@ -33,13 +33,14 @@ Usage:
   goviz [OPTIONS]
 
 Application Options:
-  -i, --input=   intput ploject name
-  -o, --output=  output file (STDOUT)
-  -d, --depth=   max plot depth of the dependency tree (128)
-  -f, --focus=   focus on the specific module
-  -s, --search=  top directory of searching
-  -l, --leaf     whether leaf nodes are plotted (false)
-  -m, --metrics  display module metrics (false)
+  -i, --input=        input project name
+  -o, --output=       output file (STDOUT)
+  -d, --depth=        max plot depth of the dependency tree (128)
+  -f, --focus=        focus on the specific module
+  -s, --search=       top directory of searching
+  -l, --leaf          whether leaf nodes are plotted (false)
+  -m, --metrics       display module metrics (false)
+  -e, --files-shown=  limit filenames displayed in a package
 
 Help Options:
   -h, --help     Show this help message
